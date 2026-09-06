@@ -1,0 +1,49 @@
+<resources>
+    <string name="app_name">LockCal</string>
+    <string name="widget_description">Displays your synchronized calendar agenda on your lock screen and home screen.</string>
+
+    <!-- Notification Strings -->
+    <string name="notification_channel_name">Lock Screen Calendar</string>
+    <string name="notification_channel_desc">Shows your upcoming calendar events permanently on the lock screen</string>
+    <string name="notification_title_default">Calendar Agenda</string>
+    <string name="notification_no_events">No upcoming events scheduled</string>
+    <string name="action_sync_now">Sync Now</string>
+    <string name="action_open_app">Open App</string>
+
+    <!-- Main Activity UI -->
+    <string name="title_active_feeds">Subscribed Calendars</string>
+    <string name="btn_add_calendar">+ Add Calendar Feed</string>
+    <string name="title_lockscreen_preview">Lock Screen Preview</string>
+    <string name="title_settings">Display &amp; Sync Settings</string>
+    <string name="switch_enable_lockscreen">Show on Lock Screen (Persistent Notification)</string>
+    <string name="switch_enable_lockscreen_desc">Keeps your calendar schedule visible on the screen lock without unlocking</string>
+    <string name="switch_hide_private">Hide event details on locked device</string>
+    <string name="switch_hide_private_desc">Only shows event time and count when phone is locked</string>
+    <string name="label_sync_interval">Sync Interval</string>
+    <string name="btn_test_sync">Sync All Now</string>
+    <string name="btn_open_glance">Preview Fullscreen Glance</string>
+    <string name="status_synced">Last synced: %1</string>
+    <string name="status_syncing">Syncing calendar feeds…</string>
+    <string name="status_no_feeds">No calendar feeds added yet. Tap "Add Calendar Feed" below to connect your Google Calendar, Outlook, or iCal URL.</string>
+
+    <!-- Add Feed Dialog -->
+    <string name="dialog_add_title">Add Calendar (iCal/ICS)</string>
+    <string name="dialog_edit_title">Edit Calendar Feed</string>
+    <string name="hint_feed_name">Calendar Name (e.g. Work, Personal)</string>
+    <string name="hint_feed_url">iCal / ICS URL (https://…)</string>
+    <string name="dialog_feed_help">To get your Google Calendar link:
+1. Open Google Calendar on web
+2. Settings &gt; Click your calendar
+3. Copy "Secret address in iCal format"</string>
+    <string name="dialog_save">Save &amp; Sync</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_delete">Delete</string>
+
+    <!-- Errors & Toasts -->
+    <string name="toast_feed_added">Calendar added and syncing…</string>
+    <string name="toast_feed_deleted">Calendar feed removed</string>
+    <string name="toast_sync_success">Calendar synced successfully!</string>
+    <string name="toast_sync_failed">Sync failed: Check your URL or network</string>
+    <string name="toast_invalid_url">Please enter a valid HTTP or HTTPS iCal URL</string>
+    <string name="toast_perm_required">Notification permission is needed to show events on the lock screen</string>
+</resources>

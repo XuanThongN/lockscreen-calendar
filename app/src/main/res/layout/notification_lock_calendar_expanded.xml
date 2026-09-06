@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="#1E293B">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:id="@+id/tvNotifDateHeader"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Upcoming Calendar Agenda"
+            android:textColor="#3B82F6"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvNotifUpdated"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Live on Lock Screen"
+            android:textColor="#64748B"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+    <!-- Event 1 -->
+    <LinearLayout
+        android:id="@+id/layoutEvent1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingVertical="4dp">
+
+        <TextView
+            android:id="@+id/tvEv1Time"
+            android:layout_width="68dp"
+            android:layout_height="wrap_content"
+            android:text="09:00 AM"
+            android:textColor="#94A3B8"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvEv1Title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Team Sync &amp; Updates"
+            android:textColor="#F8FAFC"
+            android:textSize="13sp"
+            android:singleLine="true" />
+    </LinearLayout>
+
+    <!-- Event 2 -->
+    <LinearLayout
+        android:id="@+id/layoutEvent2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingVertical="4dp">
+
+        <TextView
+            android:id="@+id/tvEv2Time"
+            android:layout_width="68dp"
+            android:layout_height="wrap_content"
+            android:text="11:30 AM"
+            android:textColor="#94A3B8"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvEv2Title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Design Review Workshop"
+            android:textColor="#F8FAFC"
+            android:textSize="13sp"
+            android:singleLine="true" />
+    </LinearLayout>
+
+    <!-- Event 3 -->
+    <LinearLayout
+        android:id="@+id/layoutEvent3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingVertical="4dp">
+
+        <TextView
+            android:id="@+id/tvEv3Time"
+            android:layout_width="68dp"
+            android:layout_height="wrap_content"
+            android:text="02:00 PM"
+            android:textColor="#94A3B8"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvEv3Title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Product Launch Roadmap"
+            android:textColor="#F8FAFC"
+            android:textSize="13sp"
+            android:singleLine="true" />
+    </LinearLayout>
+
+    <!-- Event 4 -->
+    <LinearLayout
+        android:id="@+id/layoutEvent4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingVertical="4dp">
+
+        <TextView
+            android:id="@+id/tvEv4Time"
+            android:layout_width="68dp"
+            android:layout_height="wrap_content"
+            android:text="04:30 PM"
+            android:textColor="#94A3B8"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvEv4Title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Doctor Appointment"
+            android:textColor="#F8FAFC"
+            android:textSize="13sp"
+            android:singleLine="true" />
+    </LinearLayout>
+
+    <!-- Footer Summary -->
+    <TextView
+        android:id="@+id/tvNotifFooter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="Tap to open full calendar"
+        android:textColor="#64748B"
+        android:textSize="10sp" />
+</LinearLayout>
