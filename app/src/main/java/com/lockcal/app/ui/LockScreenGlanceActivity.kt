@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lockcal.app.data.CalendarRepository
 import com.lockcal.app.databinding.ActivityLockScreenGlanceBinding
+import java.util.Calendar
 
 class LockScreenGlanceActivity : AppCompatActivity() {
 
@@ -41,8 +42,13 @@ class LockScreenGlanceActivity : AppCompatActivity() {
     }
 
     private fun setupEventsList() {
-        val now = System.currentTimeMillis()
-        val upcoming = repository.getCachedEvents().filter { it.endMillis >= now }
+        val startOfToday = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
+        val upcoming = repository.getCachedEvents().filter { it.endMillis >= startOfToday }
 
         if (upcoming.isEmpty()) {
             binding.tvGlanceEmpty.visibility = View.VISIBLE

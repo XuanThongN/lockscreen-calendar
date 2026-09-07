@@ -3,13 +3,16 @@ package com.lockcal.app.ui
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -68,7 +71,50 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        checkNotificationStatus()
         loadData()
+        notificationManager.updateLockscreenNotification()
+    }
+
+    private fun checkNotificationStatus() {
+        val areNotifsEnabled = NotificationManagerCompat.from(this).areNotificationsEnabled()
+        binding.cardNotificationWarning.visibility = if (areNotifsEnabled) View.GONE else View.VISIBLE
+    }
+
+    private fun openSystemNotificationSettings() {
+        try {
+            val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                    putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+                }
+            } else {
+                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = Uri.parse("package:$packageName")
+                }
+            }
+            startActivity(intent)
+        } catch (e: Exception) {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.parse("package:$packageName")
+            }
+            startActivity(intent)
+        }
+    }
+
+    private fun showLockscreenHelpDialog() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Lock Screen Setup Tips")
+            .setMessage(
+                "To ensure your agenda displays fully on your lock screen:\n\n" +
+                "• Samsung One UI: Go to Phone Settings > Lock screen > Notifications and select 'Details' (Samsung defaults to 'Icons only').\n\n" +
+                "• Xiaomi / MIUI / HyperOS: Go to Phone Settings > Apps > LockCal > Notifications and turn on 'Show on Lock screen'.\n\n" +
+                "• Lock Screen Widget: You can also long-press your Lock Screen or Home Screen and add the LockCal widget!"
+            )
+            .setPositiveButton("Open Settings") { _, _ ->
+                openSystemNotificationSettings()
+            }
+            .setNegativeButton("OK", null)
+            .show()
     }
 
     private fun checkPermissions() {
@@ -110,6 +156,19 @@ class MainActivity : AppCompatActivity() {
         binding.switchHidePrivate.setOnCheckedChangeListener { _, isChecked ->
             repository.setHidePrivateEnabled(isChecked)
             notificationManager.updateLockscreenNotification()
+        }
+
+        // Notification buttons
+        binding.btnEnableNotifications.setOnClickListener {
+            openSystemNotificationSettings()
+        }
+
+        binding.btnSystemNotifSettings.setOnClickListener {
+            openSystemNotificationSettings()
+        }
+
+        binding.btnLockscreenHelp.setOnClickListener {
+            showLockscreenHelpDialog()
         }
 
         // Action Buttons

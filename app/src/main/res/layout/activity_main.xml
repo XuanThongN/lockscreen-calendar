@@ -62,6 +62,52 @@
                 app:cornerRadius="12dp" />
         </LinearLayout>
 
+        <!-- Notification Permission Warning Banner -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardNotificationWarning"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:cardBackgroundColor="#451A03"
+            app:strokeColor="#F59E0B"
+            app:strokeWidth="1dp"
+            app:cardCornerRadius="14dp"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="14dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⚠️ Notifications Disabled in Android"
+                    android:textColor="#FBBF24"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="LockCal needs notification permission so your agenda appears on the lock screen."
+                    android:textColor="#FDE68A"
+                    android:textSize="12sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnEnableNotifications"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Open Notification Settings"
+                    android:backgroundTint="#F59E0B"
+                    android:textColor="#000000"
+                    app:cornerRadius="8dp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
         <!-- Lock Screen Display Switch Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
@@ -163,6 +209,43 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="false" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/surface_elevated"
+                    android:layout_marginVertical="12dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSystemNotifSettings"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="System Settings"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:textColor="@color/primary"
+                        app:strokeColor="@color/primary"
+                        app:cornerRadius="10dp"
+                        android:layout_marginEnd="6dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnLockscreenHelp"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Lock Screen Tips"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:textColor="@color/accent"
+                        app:strokeColor="@color/accent"
+                        app:cornerRadius="10dp"
+                        android:layout_marginStart="6dp" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

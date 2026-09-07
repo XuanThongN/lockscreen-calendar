@@ -17,6 +17,7 @@ import android.graphics.Canvas
 import android.util.Log
 import androidx.core.content.ContextCompat
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -62,8 +63,13 @@ class LockCalendarWidgetProvider : AppWidgetProvider() {
         ) {
             try {
                 val repository = CalendarRepository(context)
-                val now = System.currentTimeMillis()
-                val upcoming = repository.getCachedEvents().filter { it.endMillis >= now }
+                val startOfToday = Calendar.getInstance().apply {
+                    set(Calendar.HOUR_OF_DAY, 0)
+                    set(Calendar.MINUTE, 0)
+                    set(Calendar.SECOND, 0)
+                    set(Calendar.MILLISECOND, 0)
+                }.timeInMillis
+                val upcoming = repository.getCachedEvents().filter { it.endMillis >= startOfToday }
 
                 val views = RemoteViews(context.packageName, R.layout.widget_lock_calendar)
 
