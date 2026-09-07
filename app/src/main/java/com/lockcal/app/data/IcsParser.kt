@@ -28,15 +28,16 @@ object IcsParser {
         var isAllDay = false
         var rrule = ""
 
-        // Only retain events from beginning of today onwards (up to 45 days)
+        // Retain events from yesterday onwards (up to 60 days) to prevent timezone boundary clipping
         val cutoffStart = Calendar.getInstance().apply {
+            add(Calendar.DAY_OF_YEAR, -1)
             set(Calendar.HOUR_OF_DAY, 0)
             set(Calendar.MINUTE, 0)
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
         }.timeInMillis
 
-        val cutoffEnd = cutoffStart + (45L * 24 * 60 * 60 * 1000)
+        val cutoffEnd = cutoffStart + (60L * 24 * 60 * 60 * 1000)
 
         for (line in unfoldedLines) {
             val trimmed = line.trim()

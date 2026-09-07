@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Calendar provider permissions for on-device sync -->
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
+
     <!-- Network permissions to sync iCal/Google Calendar feeds -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />

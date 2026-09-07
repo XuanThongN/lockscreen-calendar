@@ -24,6 +24,7 @@ import com.lockcal.app.service.LockscreenNotificationManager
 import com.lockcal.app.widget.LockCalendarWidgetProvider
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -38,14 +39,14 @@ class MainActivity : AppCompatActivity() {
 
     private val colorPalettes = arrayOf("#3B82F6", "#10B981", "#8B5CF6", "#F97316", "#EC4899", "#06B6D4")
 
-    private val notificationPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            notificationManager.updateLockscreenNotification()
-        } else {
-            Toast.makeText(this, R.string.toast_perm_required, Toast.LENGTH_LONG).show()
+    private val permissionsLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { perms ->
+        val calGranted = perms[Manifest.permission.READ_CALENDAR] ?: false
+        if (calGranted) {
+            performSync()
         }
+        notificationManager.updateLockscreenNotification()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,20 +57,32 @@ class MainActivity : AppCompatActivity() {
         repository = CalendarRepository(this)
         notificationManager = LockscreenNotificationManager(this)
 
-        checkNotificationPermission()
+        checkPermissions()
         setupUI()
+        loadData()
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
+            performSync()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
         loadData()
     }
 
-    private fun checkNotificationPermission() {
+    private fun checkPermissions() {
+        val toRequest = mutableListOf<String>()
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+            toRequest.add(Manifest.permission.READ_CALENDAR)
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.POST_NOTIFICATIONS
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                toRequest.add(Manifest.permission.POST_NOTIFICATIONS)
             }
+        }
+        if (toRequest.isNotEmpty()) {
+            permissionsLauncher.launch(toRequest.toTypedArray())
         }
     }
 
@@ -120,8 +133,13 @@ class MainActivity : AppCompatActivity() {
         binding.rvFeeds.visibility = if (feeds.isEmpty()) View.GONE else View.VISIBLE
 
         val cachedEvents = repository.getCachedEvents()
-        val now = System.currentTimeMillis()
-        val upcoming = cachedEvents.filter { it.endMillis >= now }
+        val startOfToday = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
+        val upcoming = cachedEvents.filter { it.endMillis >= startOfToday }
         eventAdapter.updateData(upcoming)
         binding.tvEmptyEvents.visibility = if (upcoming.isEmpty()) View.VISIBLE else View.GONE
         binding.rvEvents.visibility = if (upcoming.isEmpty()) View.GONE else View.VISIBLE
@@ -146,8 +164,13 @@ class MainActivity : AppCompatActivity() {
 
                 if (result.isSuccess) {
                     val events = result.getOrNull() ?: emptyList()
-                    val now = System.currentTimeMillis()
-                    val upcoming = events.filter { it.endMillis >= now }
+                    val startOfToday = Calendar.getInstance().apply {
+                        set(Calendar.HOUR_OF_DAY, 0)
+                        set(Calendar.MINUTE, 0)
+                        set(Calendar.SECOND, 0)
+                        set(Calendar.MILLISECOND, 0)
+                    }.timeInMillis
+                    val upcoming = events.filter { it.endMillis >= startOfToday }
                     eventAdapter.updateData(upcoming)
                     feedAdapter.updateData(repository.getFeeds())
 
