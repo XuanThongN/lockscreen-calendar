@@ -55,48 +55,57 @@ object IcsParser {
 
             if (trimmed.equals("END:VEVENT", ignoreCase = true)) {
                 if (inEvent && dtStartRaw.isNotEmpty()) {
-                    val (startMillis, allDayStart) = parseDate(dtStartRaw)
-                    val (endMillis, _) = if (dtEndRaw.isNotEmpty()) {
-                        parseDate(dtEndRaw)
-                    } else {
-                        Pair(startMillis + (if (allDayStart) 86400000L else 3600000L), allDayStart)
-                    }
-
-                    val finalAllDay = isAllDay || allDayStart
-
-                    // Basic recurring event handling: if start is before today and has RRULE FREQ=WEEKLY or FREQ=DAILY
-                    var effectiveStart = startMillis
-                    var effectiveEnd = endMillis
-                    val duration = endMillis - startMillis
-
-                    if (rrule.contains("FREQ=WEEKLY", ignoreCase = true) && effectiveEnd < cutoffStart) {
-                        val oneWeek = 7L * 24 * 60 * 60 * 1000
-                        while (effectiveEnd < cutoffStart) {
-                            effectiveStart += oneWeek
-                            effectiveEnd += oneWeek
+                    try {
+                        val (startMillis, allDayStart) = parseDate(dtStartRaw)
+                        val (endMillis, _) = if (dtEndRaw.isNotEmpty()) {
+                            parseDate(dtEndRaw)
+                        } else {
+                            Pair(startMillis + (if (allDayStart) 86400000L else 3600000L), allDayStart)
                         }
-                    } else if (rrule.contains("FREQ=DAILY", ignoreCase = true) && effectiveEnd < cutoffStart) {
-                        val oneDay = 24L * 60 * 60 * 1000
-                        while (effectiveEnd < cutoffStart) {
-                            effectiveStart += oneDay
-                            effectiveEnd += oneDay
-                        }
-                    }
 
-                    if (effectiveEnd >= cutoffStart && effectiveStart <= cutoffEnd) {
-                        events.add(
-                            CalendarEvent(
-                                uid = uid,
-                                summary = summary,
-                                description = description,
-                                location = location,
-                                startMillis = effectiveStart,
-                                endMillis = effectiveEnd,
-                                isAllDay = finalAllDay,
-                                feedName = feedName,
-                                colorHex = colorHex
+                        val finalAllDay = isAllDay || allDayStart
+                        val safeEndMillis = if (endMillis <= startMillis) {
+                            startMillis + (if (finalAllDay) 86400000L else 3600000L)
+                        } else {
+                            endMillis
+                        }
+
+                        // Basic recurring event handling: if start is before today and has RRULE FREQ=WEEKLY or FREQ=DAILY
+                        var effectiveStart = startMillis
+                        var effectiveEnd = safeEndMillis
+                        var safety = 0
+
+                        if (rrule.contains("FREQ=WEEKLY", ignoreCase = true) && effectiveEnd < cutoffStart) {
+                            val oneWeek = 7L * 24 * 60 * 60 * 1000
+                            while (effectiveEnd < cutoffStart && safety++ < 1000) {
+                                effectiveStart += oneWeek
+                                effectiveEnd += oneWeek
+                            }
+                        } else if (rrule.contains("FREQ=DAILY", ignoreCase = true) && effectiveEnd < cutoffStart) {
+                            val oneDay = 24L * 60 * 60 * 1000
+                            while (effectiveEnd < cutoffStart && safety++ < 1000) {
+                                effectiveStart += oneDay
+                                effectiveEnd += oneDay
+                            }
+                        }
+
+                        if (effectiveEnd >= cutoffStart && effectiveStart <= cutoffEnd) {
+                            events.add(
+                                CalendarEvent(
+                                    uid = uid,
+                                    summary = summary,
+                                    description = description,
+                                    location = location,
+                                    startMillis = effectiveStart,
+                                    endMillis = effectiveEnd,
+                                    isAllDay = finalAllDay,
+                                    feedName = feedName,
+                                    colorHex = colorHex
+                                )
                             )
-                        )
+                        }
+                    } catch (e: Exception) {
+                        // Skip malformed single event
                     }
                 }
                 inEvent = false

@@ -22,7 +22,7 @@
     <string name="label_sync_interval">Sync Interval</string>
     <string name="btn_test_sync">Sync All Now</string>
     <string name="btn_open_glance">Preview Fullscreen Glance</string>
-    <string name="status_synced">Last synced: %1</string>
+    <string name="status_synced">Last synced: %1$s</string>
     <string name="status_syncing">Syncing calendar feeds…</string>
     <string name="status_no_feeds">No calendar feeds added yet. Tap "Add Calendar Feed" below to connect your Google Calendar, Outlook, or iCal URL.</string>
 

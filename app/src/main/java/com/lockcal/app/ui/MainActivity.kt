@@ -140,32 +140,47 @@ class MainActivity : AppCompatActivity() {
         binding.btnSyncNow.isEnabled = false
 
         lifecycleScope.launch {
-            val result = repository.syncAllFeeds()
-            binding.btnSyncNow.isEnabled = true
+            try {
+                val result = repository.syncAllFeeds()
+                binding.btnSyncNow.isEnabled = true
 
-            if (result.isSuccess) {
-                val events = result.getOrNull() ?: emptyList()
-                val now = System.currentTimeMillis()
-                val upcoming = events.filter { it.endMillis >= now }
-                eventAdapter.updateData(upcoming)
-                feedAdapter.updateData(repository.getFeeds())
+                if (result.isSuccess) {
+                    val events = result.getOrNull() ?: emptyList()
+                    val now = System.currentTimeMillis()
+                    val upcoming = events.filter { it.endMillis >= now }
+                    eventAdapter.updateData(upcoming)
+                    feedAdapter.updateData(repository.getFeeds())
 
-                binding.tvEmptyEvents.visibility = if (upcoming.isEmpty()) View.VISIBLE else View.GONE
-                binding.rvEvents.visibility = if (upcoming.isEmpty()) View.GONE else View.VISIBLE
+                    binding.tvEmptyEvents.visibility = if (upcoming.isEmpty()) View.VISIBLE else View.GONE
+                    binding.rvEvents.visibility = if (upcoming.isEmpty()) View.GONE else View.VISIBLE
 
-                notificationManager.updateLockscreenNotification()
-                LockCalendarWidgetProvider.updateAllWidgets(this@MainActivity)
+                    try {
+                        notificationManager.updateLockscreenNotification()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
 
-                val format = SimpleDateFormat("MMM d, h:mm a", Locale.getDefault())
-                binding.tvSyncStatus.text = getString(R.string.status_synced, format.format(Date()))
-                Toast.makeText(this@MainActivity, R.string.toast_sync_success, Toast.LENGTH_SHORT).show()
-            } else {
-                binding.tvSyncStatus.text = "Sync failed"
-                Toast.makeText(
-                    this@MainActivity,
-                    result.exceptionOrNull()?.message ?: getString(R.string.toast_sync_failed),
-                    Toast.LENGTH_LONG
-                ).show()
+                    try {
+                        LockCalendarWidgetProvider.updateAllWidgets(this@MainActivity)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+
+                    val format = SimpleDateFormat("MMM d, h:mm a", Locale.getDefault())
+                    binding.tvSyncStatus.text = getString(R.string.status_synced, format.format(Date()))
+                    Toast.makeText(this@MainActivity, R.string.toast_sync_success, Toast.LENGTH_SHORT).show()
+                } else {
+                    binding.tvSyncStatus.text = "Sync failed"
+                    Toast.makeText(
+                        this@MainActivity,
+                        result.exceptionOrNull()?.message ?: getString(R.string.toast_sync_failed),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            } catch (e: Exception) {
+                binding.btnSyncNow.isEnabled = true
+                binding.tvSyncStatus.text = "Sync error"
+                Toast.makeText(this@MainActivity, "Sync Error: ${e.message}", Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -182,13 +197,22 @@ class MainActivity : AppCompatActivity() {
 
         dialogBinding.btnDialogSave.setOnClickListener {
             val name = dialogBinding.etFeedName.text?.toString()?.trim().orEmpty()
-            val url = dialogBinding.etFeedUrl.text?.toString()?.trim().orEmpty()
+            val rawUrl = dialogBinding.etFeedUrl.text?.toString()?.trim().orEmpty()
 
             if (name.isBlank()) {
                 dialogBinding.etFeedName.error = "Please enter a name"
                 return@setOnClickListener
             }
-            if (url.isBlank() || (!url.startsWith("http://") && !url.startsWith("https://") && !url.startsWith("webcal://"))) {
+
+            var cleanUrl = rawUrl
+            if (cleanUrl.isNotBlank() &&
+                !cleanUrl.startsWith("http://", ignoreCase = true) &&
+                !cleanUrl.startsWith("https://", ignoreCase = true) &&
+                !cleanUrl.startsWith("webcal://", ignoreCase = true)) {
+                cleanUrl = "https://$cleanUrl"
+            }
+
+            if (cleanUrl.isBlank()) {
                 dialogBinding.etFeedUrl.error = getString(R.string.toast_invalid_url)
                 return@setOnClickListener
             }
@@ -196,7 +220,7 @@ class MainActivity : AppCompatActivity() {
             val chosenColor = colorPalettes[repository.getFeeds().size % colorPalettes.size]
             val newFeed = CalendarFeed(
                 name = name,
-                url = url,
+                url = cleanUrl,
                 colorHex = chosenColor
             )
 
