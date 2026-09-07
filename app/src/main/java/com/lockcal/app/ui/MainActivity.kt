@@ -212,7 +212,7 @@ class MainActivity : AppCompatActivity() {
     private fun confirmDeleteFeed(feed: CalendarFeed) {
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.dialog_delete)
-            .setMessage("Remove calendar "${feed.name}"?")
+            .setMessage("Remove calendar \"${feed.name}\"?")
             .setPositiveButton(R.string.dialog_delete) { _, _ ->
                 repository.deleteFeed(feed.id)
                 loadData()

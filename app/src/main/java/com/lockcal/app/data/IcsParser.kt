@@ -187,13 +187,11 @@ object IcsParser {
 
     private fun unescapeText(text: String): String {
         return text
-            .replace("\n", "
-")
-            .replace("\N", "
-")
-            .replace("\,", ",")
-            .replace("\;", ";")
-            .replace("\\", "\")
+            .replace("\\n", "\n")
+            .replace("\\N", "\n")
+            .replace("\\,", ",")
+            .replace("\\;", ";")
+            .replace("\\\\", "\\")
             .trim()
     }
 }
